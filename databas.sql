@@ -1,0 +1,12 @@
+CREATE TABLE courses (
+    id SERIAL PRIMARY KEY NOT NULL,
+    name VARCHAR(255) NOT NULL,
+    title VARCHAR (255) NOT NULL,
+    description VARCHAR (255) NOT NULL,
+    url VARCHAR NOT NULL,
+    module INTEGER NOT NULL,
+    chapter INTEGER NOT NULL,
+    category VARCHAR (60) NOT NULL,
+    status VARCHAR (30) NOT NULL,
+--     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
