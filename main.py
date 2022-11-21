@@ -1,5 +1,5 @@
 from fastapi import FastAPI, Request
-from fastapi.responses import JSONResponse
+from fastapi.responses import JSONResponse, PlainTextResponse
 
 import psycopg2
 from psycopg2 import extras
@@ -66,21 +66,31 @@ async def get_course(id: int):
 async def create_course(course: Course):
 
     conn = get_connection()
-    cur = conn.cursor(cursor_factory=extras.RealDictCursor)
+    cur = conn.cursor()
 
-    cur.execute('INSERT INTO courses (name, title, description, url, module, chapter, category, status) values '
-                '(%s, %s, %s, %s, %s, %s, %s, %s) RETURNING *',
-                (course.name, course.title, course.description, course.url, course.module, course.chapter,
-                 course.category, course.status))
+    # búsqueda si hay un repetido (name, module y chapter)
+    cur.execute('SELECT name, module, chapter FROM courses WHERE name = %s and module=%s  and chapter=%s',
+                (course.name, course.module, course.chapter))
+    course_found = cur.fetchone()
+    print(course_found)
+    if course_found:
+        return JSONResponse(status_code=400, content={"message": "bad request"})
 
-    new_course = cur.fetchone()
-    conn.commit()
-    cur.close()
+    else:
 
-    if conn is not None:
-        conn.close()
+        cur.execute('INSERT INTO courses (name, title, description, url, module, chapter, category, status) values '
+                    '(%s, %s, %s, %s, %s, %s, %s, %s) RETURNING *',
+                    (course.name, course.title, course.description, course.url, course.module, course.chapter,
+                     course.category, course.status))
 
-    return JSONResponse(status_code=201, content={"message": "courses created", "course": new_course})
+        new_course = cur.fetchone()
+        conn.commit()
+        cur.close()
+
+        if conn is not None:
+            conn.close()
+
+        return JSONResponse(status_code=201, content={"message": "courses created", "course": new_course})
 
 
 @app.put("/courses/{id}")
