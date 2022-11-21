@@ -1,11 +1,44 @@
 # Test your FastAPI endpoints
 
-GET http://127.0.0.1:8000/
+GET http://127.0.0.1:4000/courses
 Accept: application/json
 
 ###
 
-GET http://127.0.0.1:8000/hello/User
+GET http://127.0.0.1:4000/courses/11
 Accept: application/json
 
 ###
+
+POST http://127.0.0.1:4000/courses
+Content-Type: application/json
+
+{
+  "name": "GIT DESDE CERO",
+  "title": "Configuración de GIT",
+  "description": "Comandos para la configuración de GIT",
+  "url": "https://drive.google.com/file/d/1XrbN-IOfV0edXLv2iFKSyo6L6PoAst9U/view?usp=share_link",
+  "module": 1,
+  "chapter": 4,
+  "category": "programacion",
+  "status": "OK"
+}
+
+###
+PUT http://127.0.0.1:4000/courses/14
+Content-Type: application/json
+
+{
+  "name": "GIT DESDE CERO",
+  "title": "Configuración de GIT XD",
+  "description": "Comandos para la configuración de GIT by noa canoa",
+  "url": "https://drive.google.com/file/d/1XrbN-IOfV0edXLv2iFKSyo6L6PoAst9U/view?usp=share_link",
+  "module": 1,
+  "chapter": 4,
+  "category": "programacion",
+  "status": "OK"
+}
+###
+
+DELETE http://127.0.0.1:4000/courses/14
+Accept: application/json

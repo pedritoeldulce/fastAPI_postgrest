@@ -1,4 +1,4 @@
-from fastapi import FastAPI, Request
+from fastapi import FastAPI, Request, HTTPException
 from fastapi.responses import JSONResponse, PlainTextResponse
 
 import psycopg2
@@ -68,16 +68,15 @@ async def create_course(course: Course):
     conn = get_connection()
     cur = conn.cursor()
 
-    # búsqueda si hay un repetido (name, module y chapter)
-    cur.execute('SELECT name, module, chapter FROM courses WHERE name = %s and module=%s  and chapter=%s',
-                (course.name, course.module, course.chapter))
+    # búsqueda si hay un repetido (name, url, module y chapter)
+    cur.execute('SELECT name, url, module, chapter FROM courses WHERE name = %s and url = %s and module=%s  '
+                'and chapter=%s', (course.name, course.url, course.module, course.chapter))
     course_found = cur.fetchone()
-    print(course_found)
+
     if course_found:
-        return JSONResponse(status_code=400, content={"message": "bad request"})
+        raise HTTPException(status_code=400, detail={"message": "bad request"})
 
     else:
-
         cur.execute('INSERT INTO courses (name, title, description, url, module, chapter, category, status) values '
                     '(%s, %s, %s, %s, %s, %s, %s, %s) RETURNING *',
                     (course.name, course.title, course.description, course.url, course.module, course.chapter,
